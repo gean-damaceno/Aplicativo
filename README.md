@@ -1,2 +1,2 @@
 # Scripts
-Aplicativo em shiny
+Scripts para diversas funções em shiny
