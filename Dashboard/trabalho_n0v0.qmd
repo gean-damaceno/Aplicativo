@@ -1,0 +1,407 @@
+---
+title: "Análise no desempenho da média de Matemática do Enem 2023 em todos os estados Brasileiros"
+format:
+  dashboard:
+    orientation: columns
+    vertical_layout: fill
+    source_code: embed
+---
+
+```{r}
+library(flexdashboard)
+library(tidyverse)
+#remotes::install_github("paulofelipe/D3plusR")
+library(D3plusR)
+library(janitor)
+library(ggspatial)
+library(shiny)
+library(ggplot2)
+library(geobr)
+library(data.table)
+library(patchwork)
+library(gridExtra)
+library(tmap)
+library(plotly)
+library(skimr)
+```
+
+```{r}
+
+#------------------------##-------------------##---------------------------##--------------------------#
+#------------------------##-------------------##---------------------------##--------------------------#
+ENEM_2023 <- read.table("C:/Graduacao_Estatistica/periodo_1/Organizacaode_Dados/educação/microdados_enem_2023/DADOS/MICRODADOS_ENEM_2023.csv", sep=";", quote="\"", header = TRUE)
+
+
+
+ENEM_2023 <- ENEM_2023 |>
+  select(TP_FAIXA_ETARIA,IN_TREINEIRO,TP_LOCALIZACAO_ESC,TP_PRESENCA_MT,  TP_SEXO,TP_ESTADO_CIVIL,
+         TP_COR_RACA,TP_ESCOLA, NU_NOTA_MT,   TP_ENSINO, SG_UF_PROVA, Q006)
+
+
+
+#table(is.na(ENEM_2023$NU_NOTA_MT)) Verificar os NA
+ # ENEM_2023$TP_FAIXA_ETARIA <- factor(ENEM_2023$TP_FAIXA_ETARIA, levels = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+ #                                     labels = c(' Menor 17','17','18','19','20','21','22',
+ #                                                '23','24','25','30','35','40',
+ #                                                '45','50','55','60','65',
+ #                                                '70','70 >'))
+ENEM_2023$TP_FAIXA_ETARIA <- factor(ENEM_2023$TP_FAIXA_ETARIA,
+                                    levels = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+                                    labels = c('Menor de 17 anos','17 anos','18 anos','19 anos','20 anos','21 anos','22 anos',
+                                               '23 anos','24 anos','25 anos','Entre 26 e 30 anos','Entre 31 e 35 anos','Entre 36 e 40 anos',
+                                               'Entre 41 e 45 anos','Entre 46 e 50 anos','Entre 51 e 55 anos','Entre 56 e 60 anos','Entre 61 e 65 anos',
+                                               'Entre 66 e 70 anos','Maior de 70 anos'))
+ENEM_2023$IN_TREINEIRO <- factor(ENEM_2023$IN_TREINEIRO, levels = c(1,0),  labels=c('Sim','Não'))
+ENEM_2023$TP_LOCALIZACAO_ESC <- factor(ENEM_2023$TP_LOCALIZACAO_ESC, levels = c(1,2), labels=c('Urbana','Rural'))
+ENEM_2023$TP_PRESENCA_MT <- factor(ENEM_2023$TP_PRESENCA_MT, levels = c(0,1,2),
+                                   labels=c('Faltou á prova',
+                                            'Presente na prova',
+                                            'Eliminado na prova'))
+ENEM_2023$TP_SEXO <- factor(ENEM_2023$TP_SEXO, levels = c('M','F'), labels=c('Masculino','Feminino'))
+ENEM_2023$TP_ESTADO_CIVIL <- factor(ENEM_2023$TP_ESTADO_CIVIL, levels = c(0,1,2,3,4),
+                                    labels=c('Não informado',
+                                             'Solteiro(a)',
+                                             'Casado(a)/Mora com um(a) companheiro(a)',
+                                             'Divorciado(a)/Desquitado(a)/Separado(a)',
+                                             'Viúvo(a)'))
+
+ENEM_2023$TP_COR_RACA <- factor(ENEM_2023$TP_COR_RACA, levels = c(0,1,2,3,4,5,6),
+                                labels=c('Não declarado',
+                                         'Branca','Preta',
+                                         'Parda','Amarela',
+                                         'Indígena',
+                                         'Não dispõe da informação'))
+
+ENEM_2023$TP_ESCOLA <- factor(ENEM_2023$TP_ESCOLA, levels = c(1,2,3),
+                              labels=c('Não respondeu',
+                                       'Pública',
+                                       'Privada'))
+
+ENEM_2023$TP_ENSINO <- factor(ENEM_2023$TP_ENSINO, levels = c(1,2),
+                              labels=c('Ensino Regular',
+                                       'Educação Especial - Modalidade Substitutiva'))
+ENEM_2023$Q006 <- factor(ENEM_2023$Q006,levels =  c('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'),
+                         labels=c('Nenhuma Renda',
+                                  'R$ 1.320,00','R$ 1.980,00',
+                                  'R$ 2.640,00','R$ 3.300,00',
+                                  'R$ 3.960,00','R$ 5.280,00',
+                                  'R$ 6.600,00','R$ 7.920,00',
+                                  'R$ 9.240,00','R$ 10.560,00',
+                                  'R$ 11.880,00','R$ 13.200,00',
+                                  'R$ 15.840,00','R$ 19.800,00',
+                                  'R$ 26.400,00', 'R$ 26.400,00 ou Mais'))
+
+#ENEM_2023 <- read.csv("C:/Graduacao_Estatistica/periodo_1/Organizacaode_Dados/Dashboard/dados.csv")
+# media_renda <- aggregate(NU_NOTA_MT ~ Q006 +  TP_SEXO + TP_ESCOLA +
+#                          SG_UF_PROVA, data = ENEM_2023, FUN = mean, na.rm = TRUE)
+# media_renda1 <- slice_max(media_renda, order_by = NU_NOTA_MT, n = 1)
+# media_renda1
+# media_renda2 <- slice_min(media_renda, order_by = NU_NOTA_MT, n = 1)
+# media_renda2
+
+
+# ENEM_2023$Q006 <- factor(ENEM_2023$Q006,levels =  c('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'),
+#                          labels=c('Nenhuma Renda','Até R$ 1.320,00','De R$ 1.320,01 Até R$ 1.980,00.',
+#                                   'De R$ 1.980,01 Até R$ 2.640,00.','De R$ 2.640,01 Até R$ 3.300,00.',
+#                                   'De R$ 3.300,01 Até R$ 3.960,00.','De R$ 3.960,01 Até R$ 5.280,00.',
+#                                   'De R$ 5.280,01 Até R$ 6.600,00.','De R$ 6.600,01 Até R$ 7.920,00.',
+#                                   'De R$ 7.920,01 Até R$ 9.240,00.','De R$ 9.240,01 Até R$ 10.560,00.',
+#                                   'De R$ 10.560,01 Até R$ 11.880,00.','De R$ 11.880,01 Até R$ 13.200,00.',
+#                                   'De R$ 13.200,01 Até R$ 15.840,00.','De R$ 15.840,01 Até R$19.800,00.',
+#                                   'De R$ 19.800,01 Até R$ 26.400,00.','Acima de R$ 26.400,00.'))
+
+```
+
+#  {.sidebar}
+
+ENEM de 2023:
+
+|                           |                          |
+|---------------------------|--------------------------|
+| **Proporção n° inscritos**| Por gênero, tipo de escola, cor/raça  e mediana quanto ao tipo de escola  |
+| **Proporção n° inscritos**| Renda mensal                     |
+| **Médias **               | Por Estado Brasileiro                  |
+| **Histograma**            | Notas de matemática |
+
+
+
+------------------------------------------------------------------------
+
+::: {.callout-note collapse="true"}
+## Site
+
+[Site ENEM](https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem).
+:::
+
+# Proporções e medianas
+
+```{r}
+#=======================================
+
+# comunicacao com o usuario
+# ui <- fluidPage(
+#   sidebarLayout(
+#     sidebarPanel(
+#       sliderInput("amostras", "Defina o número de obs:", min = 10, max = 1000, value = 100),
+#       sliderInput("media", "Defina a média:", min = -100, max = 100, value = 0),
+#       numericInput("desvio", "Defina o desvio padrão:", min = 0.01, max = 10, value = 1)
+#       ),
+#     
+#     
+#     mainPanel(plotOutput("distPlot"))
+#   )
+# )
+```
+
+## Números de incritos por sexo e tipo de renda {height="20%"}
+
+## Column {width="40%"}
+
+```{r}
+#| title: Proporções do número de incritos no ENEM por gênero (%)
+ENEM_2023 |>
+  group_by(TP_SEXO) |>
+  summarise(prop = n()/nrow(ENEM_2023)) |>
+  ggplot(aes(x = TP_SEXO, y = prop, fill = TP_SEXO)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = scales::percent(prop), y = prop), vjust = -0.5, size = 3) +
+  labs(x = "Número de inscritos por gênero (%)", y = "Proporção", fill = "Sexo") +
+  theme_classic() +
+  theme(axis.text.x = element_blank())
+#------------------------------------------------------------------ 
+```
+
+```{r}
+#| title: Mediana da nota de matemática dos participantes em relação a renda mensal
+ggplot(ENEM_2023, aes(x = Q006, y = NU_NOTA_MT, fill = factor(Q006))) +
+  geom_boxplot() +
+  stat_summary(
+    fun = mean, 
+    geom = "point", 
+    shape = 18, 
+    size = 1.2, 
+    color = "red", 
+    position = position_dodge(width = 0.75)
+  ) +
+  labs(x = "Mediana da nota de Matemática por renda mensal", 
+       y = "Mediana da nota de Matemática")  +
+  theme(plot.title = element_text(hjust = 0.5))  +
+  scale_fill_discrete(name = "Renda") +
+  theme_classic() +
+  theme(axis.text.x = element_blank())
+  
+
+
+```
+
+## Média de matemática por cor/raça e tipo de escola {orientation="columns"}
+
+## Column {width="40%"}
+
+```{r}
+#| title: Proporções de inscritos em relação a cor/raça 
+ENEM_2023 |> 
+group_by(TP_ESCOLA, TP_COR_RACA) |>
+summarise(prop = n() / nrow(ENEM_2023)) |>
+ggplot(aes(x = TP_ESCOLA , y = prop, fill = TP_COR_RACA)) +
+geom_bar(stat = "identity", position = "dodge") +
+geom_text(aes(label = paste0(round(prop * 100, 1), "%")),
+position = position_dodge(width = 0.9), vjust = -0.9,hjust = 0.4,angle = 0, size = 3) +
+labs(x = "Porcentagem de inscritos por Cor/Raça (tipo de escola)", y = "Proporção", fill = "Cor/raça") +
+  theme_classic()
+# ggplotly(CC)
+# ENEM_2023_prop <- ENEM_2023 |>
+#   group_by(TP_ESCOLA, TP_COR_RACA) |>
+#   summarise(prop = n() / nrow(ENEM_2023)) |>
+#   ungroup()
+# 
+# # Criando o gráfico com ggplot2
+# ggplot(data = ENEM_2023_prop, aes(x = TP_ESCOLA, y = prop, fill = TP_COR_RACA)) +
+#   geom_bar(stat = "identity", position = "dodge") +
+#   geom_text(aes(label = paste0(round(prop * 100, 1), "%")), 
+#             position = position_dodge(width = 0.9), vjust = -0.5, size = 3) +
+#   labs(x = "Porcentagem de inscritos por Cor/Raça", y = "Proporção", fill = "Cor/Raça") +
+#   theme_minimal()
+
+# Convertendo para um gráfico interativo com plotly
+
+```
+
+```{r}
+#| title: Mediana da nota de matemática por tipo de escola 
+
+ggplot(ENEM_2023, aes(x = TP_ESCOLA, y = NU_NOTA_MT, fill = factor(TP_ESCOLA))) +
+  geom_boxplot() +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3, color = "red", position = position_dodge(width = 0.75)) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    aes(label = round(..y.., 1)),
+    vjust = -0.7,  # Ajusta a posição vertical do texto
+    color = "red", 
+    size = 3
+  ) +
+  labs(x = "Mediana da nota de matemática quanto ao tipo de escola", y = "Mediana de Matemática") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_discrete(name = "Tipo de escola") +
+theme_classic() +
+  theme(axis.text.x = element_blank())
+#theme(legend.position = "none")
+
+```
+
+# Proporções nº inscritos {orientation="columns"}
+
+## Column {width="60%"}
+
+```{r}
+#| title: Proporções de inscritos em relação a renda mensal.
+ENEM_2023 |>
+  group_by(Q006) |>
+  summarise(prop = n() / nrow(ENEM_2023)) |>
+  ggplot(aes(x = Q006 , y = prop, fill = Q006)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(prop * 100, 1), "%")), 
+            position = position_dodge(width = 0.9),hjust = 0.5,vjust = -0.5, size = 3, angle = 0) +
+  labs(x = "Porcentagem de inscritos por faixa de renda mensal", y = "Proporção", fill = "Renda") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_classic() +
+  theme(axis.text.x = element_blank())
+```
+
+
+
+# Mapa com as médias
+
+
+
+## Row {height="60%"}
+### Column {width="50%"}
+
+```{r}
+#| title: Média de Matemática por estado Brasileiro
+
+# media_estado <- aggregate(NU_NOTA_MT ~ SG_UF_PROVA, data = ENEM_2023, FUN = mean, na.rm = TRUE)
+# mapa_estados <- read_state(showProgress = FALSE)
+# 
+# dad <- left_join(mapa_estados, media_estado, by = c("abbrev_state" = "SG_UF_PROVA"))
+# dad <- dad %>%
+#   mutate(nudge_x = ifelse(abbrev_state == "DF", 0.1, 0),
+#          nudge_y = ifelse(abbrev_state == "DF", 0.7, 0))
+# p <- ggplot() +
+#   geom_sf(data = dad, aes(fill = NU_NOTA_MT), message = FALSE) +
+#   scale_fill_distiller(palette = "Greens", direction = 1, name = "Média de Matematica") +
+#   geom_sf_text(data = dad, aes(label = abbrev_state), size = 2, color = "black",
+#                nudge_x = ifelse(dad$abbrev_state == "DF", dad$nudge_x, 0),
+#                nudge_y = ifelse(dad$abbrev_state == "DF", dad$nudge_y, 0)) +
+#   annotation_north_arrow(style = north_arrow_fancy_orienteering(), location = "tr") +
+#   labs(x = "Longitude", y = "Latitude") +
+# annotation_scale() +
+# theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+# ggplotly(p)
+media_estado <- aggregate(NU_NOTA_MT ~ SG_UF_PROVA, data = ENEM_2023, FUN = mean, na.rm = TRUE)
+media_renda <- aggregate(NU_NOTA_MT ~ Q006 + SG_UF_PROVA, data = ENEM_2023, FUN = mean, na.rm = TRUE)
+
+
+mapa_estados <- read_state(showProgress = FALSE)
+dad <- left_join(mapa_estados, media_estado, by = c("abbrev_state" = "SG_UF_PROVA"))
+dad <- dad %>%
+  mutate(nudge_x = ifelse(abbrev_state == "DF", 0.1, 0),
+         nudge_y = ifelse(abbrev_state == "DF", 0.7, 0))
+dad$"Média" <- round((dad$NU_NOTA_MT),2)
+p <-  ggplot() +
+  geom_sf(data = dad, aes(fill = Média), color = "white") +
+  scale_fill_distiller(palette = "Greens", direction = 1, name = "Média de Matemática") +
+  geom_sf_text(data = dad, aes(label = abbrev_state ), size = 2, color = "black",       nudge_x = ifelse(dad$abbrev_state == "DF", dad$nudge_x, 0),
+               nudge_y = ifelse(dad$abbrev_state == "DF", dad$nudge_y, 0)) +
+# geom_sf_text(data = dad, aes(label = round(NU_NOTA_MT, 1)), size = 2, color = "black",       nudge_x = ifelse(dad$abbrev_state == "DF", dad$nudge_x, 0),
+#                nudge_y = ifelse(dad$abbrev_state == "DF", dad$nudge_y, 0)) +
+annotation_north_arrow(style = north_arrow_fancy_orienteering(), location = "tr") +
+  labs(x = "Longitude", y = "Latitude") +
+  annotation_scale() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank()) +
+theme_classic()
+ggplotly(p)
+```
+
+### Column {width="20%"}
+## Row {height="20%"}
+
+| Tipo de Escola | Médias |
+|----------------|--------|
+| Não respondeu  | 535.91 |
+| Pública        | 503.99 |
+| Privada        | 630.77 |
+
+: Médias de matemática por tipo de escola
+
+###
+
+| Disciplina          | Masculino | Feminino |
+|----------------------|-----------|----------|
+| Matemática           | 560.80    | 516.85   |
+
+: Médias de matemática por gênero
+
+# Histograma
+
+## Row {height="60%"}
+```{r}
+ENEM_2023$"Média" <- round((ENEM_2023$NU_NOTA_MT),2)
+ENEM_2023 <- as.data.frame(ENEM_2023)
+#ENEM_2023 <- round((ENEM_2023$Média),2)
+ss <- ggplot(ENEM_2023, aes(x = Média)) + 
+  geom_density(binwidth = 10, fill = "blue", color = "black") +
+  theme_minimal() +
+ xlim(0, 1000) +  # Limites do eixo x entre 0 e 100
+  labs(x = "Distribuição das notas de Matemática", y = "Frequência") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+ggplotly(ss)
+
+
+```
+
+### Row {height="40%"}
+```{r}
+
+
+library(DT)
+
+# Criar a tabela de resumo
+resumo_notas_df <- as.data.frame(skim(ENEM_2023$NU_NOTA_MT))  # Use a variável correta
+
+resumo_ajustado <- resumo_notas_df %>%
+  # Transformar as colunas numéricas e arredondar
+  mutate(Média = round(numeric.mean, 2),
+         `Desvio Padrão` = round(numeric.sd, 2),
+         Mediana = round(numeric.p50, 2),
+         Máximo = round(numeric.p100, 2)) %>%
+  # Selecionar e renomear as colunas
+  select(skim_variable, n_missing, Média, `Desvio Padrão`, numeric.p0, Mediana, Máximo, numeric.hist) %>%
+  rename(Variável = skim_variable,
+         Faltantes = n_missing,
+         Mínimo = numeric.p0,
+         Histograma = numeric.hist)
+
+# Criar e exibir a tabela interativa com DT
+datatable(resumo_ajustado, 
+          options = list(
+            pageLength = 10, 
+            autoWidth = TRUE,
+            dom = 'Bfrtip',  # Define a estrutura dos controles
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+            searching = FALSE,  # Remove a caixa de pesquisa
+            language = list(
+              info = ""  # Remove o texto "Showing X entries"
+            )
+          )) %>%
+  # Adicionar CSS para remover especificamente a mensagem
+  htmlwidgets::prependContent(tags$style(
+    HTML(".dataTables_info { display: none; }")
+  ))
+```
+
+
