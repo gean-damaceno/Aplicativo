@@ -1,0 +1,1245 @@
+---
+title: Matemática Financeira com o uso do R
+
+  
+author: "**Gean Pereira Damaceno** Licenciado em Matemática - IFPI; *geandamaceno030@gmail.com*"
+ 
+
+date: "`r format(Sys.time(), '%d %B, %Y')`,"
+output: 
+    html_document:
+      highlight: zenburn
+      theme: bootstrap
+      number_sections: yes
+      toc: yes
+      toc_float:
+         collapsed: yes
+         smooth_scroll: yes
+         knitr:: opts_chunk$set(size = 14)
+         latex_engine: xelatex
+    mainfont: Arial
+    
+---
+
+
+```{r setup, include= FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<center>![Matemática financeira](https://th.bing.com/th/id/OIP.ncDSdMmJ8Gn_ul4Q_OsK0wHaEK?pid=ImgDet&w=207&h=116&c=7&dpr=1,3 width=45%)
+
+<div style="text-align: justify">
+
+# O que é a Matemática Financeira?
+
+A Matemática financeira é muito utilizada para a análise de operações financeiras simples e complexas.[Educar mais Brasil](https://www.educamaisbrasil.com.br/enem/matematica/matematica-financeira).
+
+
+     A matemática financeira é uma das áreas da matemática que estuda a variação do dinheiro ao longo do tempo. Ela é muito utilizada nas atividades financeiras do dia a dia, das mais simples às mais complexas.
+
+Quem deseja comprar um imóvel precisa escolher uma forma de pagamento, à vista ou parcelado. Por meio da matemática financeira será possível escolher a opção mais viável e que gere menos custos, calculando, por exemplo, os juros incididos nas prestações do financiamento ou o desconto na quitação no ato da compra. Dessa forma, a matemática financeira tem uma importância fundamental para a vida das pessoas.<br/>
+
+ História da matemática financeira
+
+As antigas civilizações já se utilizavam da matemática para as atividades comerciais da época. Os sumérios realizavam empréstimos de sementes e o pagamento era feito com uma parte da colheita, uma forma de pagamento de juros. Na época não existia outra moeda de troca. As informações financeiras eram escritas em tábuas com dados como escrituras de vendas e notas promissórias. Muitos anos depois, muitos livros sobre o assunto produzidos no século XVII foram redescobertos no período do Renascimento. A aritmética de Treviso foi considerado o primeiro registro impresso de matemática financeira em 1478, quando apresentou aplicações e práticas do escambo.
+
+Pierro Borghi publicou em 1484 a “Aritmética Comercial”, na Itália, fundamental para o desenvolvimento da matemática financeira por tratar de questões relacionadas ao comércio da época. As 17 edições da publicação, a última em 1557, mostram a importância desse legado. Outro destaque da época foi Filippo Calandri, que desenvolveu uma forma aritmética reconhecida como a primeira com problemas ilustrados.
+
+Com o desenvolvimento do comércio e a comercialização de ouro e prata, muitos países criaram suas próprias moedas. Porém, as diferentes moedas entre os países causou problemas comerciais que foram solucionados com o surgimento dos cambistas.
+
+Os cambistas eram responsáveis pela troca e comercialização entre as diferentes moedas e com o tempo passaram a emprestar e guardar dinheiro. O termo “banco” das instituições financeiras atuais faz referência aos cambistas que ficavam em bancos de madeira. 
+
+A evolução da economia e, consequentemente, da matemática financeira, permitiu que muitas situações consideradas impossíveis de serem resolvidas, hoje podem ser solucionadas por meio de técnicas e ferramentas específicas. 
+
+    OBJETIVO
+
+    Este material têm por objetivo, o auxilio nas resoluções das atividades, para que o aluno desenvolva conhecimento, de forma prática e dinâmica, para que os discentes tenham suas curiosidades ao pesquisar mais sobre os assuntos em pauta.
+
+
+# JUROS SIMPLES
+
+Geralmente, os juros simples pagos ou recebidos durante um determinado período são uma porcentagem fixa do valor do principal que foi emprestado ou investido.Os juros simples são baseados no total do valor de um empréstimo ou depósito. [Juros simples e Compostos](https://blog.nubank.com.br/juros-simples-e-composto-qual-a-diferenca/)
+
+j= juros
+
+C= Valor inicial da transação, chamdo em matemática financeira de Capittal
+
+t= Período da transação (tempo)
+
+i = taxa de juros ( valor normalmente expresso em porcentagem)
+
+### Equação do Juros Simples
+
+$$J=c\cdot i\cdot t$$
+Exemplo: Gean Damaceno, pretende investir um capital em uma instituição financeira, ele tem um capital de R$15.000,00 Reais. ao pesquisar as taxas de juros, ele encontrou uma intituição, que pagava 3% ao mes, ele queria em um prazo de 24 meses. Qual o juros, ao final da aplicação?
+
+### Montando a função do juros simples, temos:
+
+
+```{r, echo=TRUE}
+J_s<-function(c, i, t){
+  j<-c*(i/100)*t
+  return(j)
+}
+J_s(15000, 3, 24)#Logo efetuado o cálculo pela função, temos o juros.
+```
+
+
+### Criando o Gráfico do juros simples, em função do tempo, temos:
+
+
+```{r}
+Juros_simples<-function(t){
+  15000*3/100*t
+}
+curve(Juros_simples, col="pink", lwd=3,xlab="Tempo",ylab="Montante",main="Juros simples")
+
+```
+    
+    Podemos analisar o gráfico do juros simples, será uma "linha reta" uma regressão linear. Daí, concluímos que a variável (y = Montante) é dependente da variável (x = tempo), ou seja, uma função linear, esse tipo de juros, não é aplicado em intituições financeiras, devido elas perderem lucros, elas preferem aplicar juros compostos, como veremos adiante.
+
+### Montante
+
+O montante equivale ao valor futuro de uma operação financeira, incluindo ao valor do capital inicial os juros correspondentes ao período em questão. [Montante](https://www.suno.com.br/artigos/montante/)
+
+$$M= j + c$$
+
+### Usando o capital e juros da questão anterior, temos o seguinte Montante
+
+M = 10800 + 15000 => 25.800,00
+
+# JUROS COMPOSTOS
+
+
+
+Os juros compostos geralmente são fatores importantes nas transações comerciais, investimentos ou produtos financeiros. Eles estão normalmente ligados a itens que se estendem por vários períodos ou anos.os juros compostos são calculados sobre o valor total + os juros simples cobrados sobre ele – é o chamado “juros sobre juros”. Eles são mais comuns em investimentos a longo prazo.[Juros simples e Compostos](https://blog.nubank.com.br/juros-simples-e-composto-qual-a-diferenca/)
+
+ 
+ 
+M= montante
+
+C= capital
+
+i= taxa de juros
+
+t = período de tempo
+
+### Equação do juros compostos
+
+$$M=c(1+i)^{t}$$
+
+### Montando a função do juros compostos, temos:
+
+```{r , echo=TRUE}
+J_c<-function(c, i, n)
+{
+  j<-c*(1+i/100)^n
+  
+  return(j)
+}
+J_c(50000, 4, 6)#(c=capital, i=taxa, n=períodos) montando a função genérica do juros compostos
+```
+Criando uma curva em função do tempo, temos:
+
+```{r}
+Juros_Compostos<-function(t){
+ M<- 600*(1+0.1)^t
+ return(M)
+}
+
+curve(Juros_Compostos,0,50,col="green",lwd=3,xlab="Tempo",ylab="Montante",main="Juros compostos")
+
+
+```
+
+    Ao criar o gráfico para a função dos juros compostos, podemos obervar que o crescimento do luvro, será de forma exponencial,como mostra a figura o gráfico.
+
+
+Exemplo Juros compostos.
+
+Ao analisar as taxas de investimentos nas instituições financeiras, Gean Damaceno chegou a uma conclusão. Vai aplicar seu capital de R$50.000,00 Mil reais, a juros compostos, com taxa de 4% ao mês, em um período de 48 meses. Qual o juros a receber, ao final da aplicação?
+
+```{r , echo=TRUE}
+J_c<-function(c, i, n)
+{
+  j<-c*(1+i/100)^n
+  
+  return(j)
+}
+J_c(50000, 4, 48)
+```
+
+# EQUIVALÊNCIA DE CAPITAIS (Valor futuro e Valor Atual)
+O Valor futuro refere-se à capitalização de um bem financeiro qualquer. O investimento pode ser um imóvel, ações, cotas em um fundo, etc.[Valor futuro e valor presente](https://wp.ufpel.edu.br/planilhasgoogle/modulo-avancado/aula-2-funcoes-financeiras/valor-futuro-e-valor-presente/)
+
+
+VF = valor futuro
+
+P = prestação
+
+n = numero do período
+
+i = taxa 
+
+$$V_F=P\cdot \frac{(1+i)^{n}-1}{i}$$
+Exemplo:(Q-247) Uma pessoa deposita mensalmente R$700,00 num fundo que rende juros compostos, à taxa de 1.3% ao mês, são feitos 25 depósitos. Qual será seu montante 3 meses após ter feito o ultimo depósito?
+
+Criando a função do valor futuro, temos:
+
+```{r}
+Valor_futuro<-function(p, i, n){
+  VF<-p*(((1+i/100)^n-1))/(i/100)
+  return(VF)
+}
+Valor_futuro(700, 1.3, 28)#calculando o valor fututo, com (p=prestação, i=taxa, n=período)
+```
+logo, o valor futuro será de R$23.460,91
+
+Valor presente ou valor atual refere-se a uma quantia hoje em dinheiro corrente.[Valor futuro e valor presente](https://wp.ufpel.edu.br/planilhasgoogle/modulo-avancado/aula-2-funcoes-financeiras/valor-futuro-e-valor-presente/)
+
+VA = valor atual
+
+P = prestação
+
+n = numero 
+
+i = taxa
+
+$$V_A=P\cdot \frac{1-(1+i)^{-n}}{i}$$
+Exemplo: Uma televisão de LCD de 32 polegadas é vendida em quatro prestações mensais de R$ 500,00, sendo a primeira paga um mês após a compra. Sabendo que a loja opera com uma taxa de juros compostos de 4% ao mês, qual o valor do preço à vista? [Brasil Escola](https://brasilescola.uol.com.br/matematica/calculo-valor-atual.htm)
+
+
+```{r}
+Valor_atual<-function(p, i, n){
+  VA<-p*(1-(1+i/100)^-n)/(i/100)
+  return(VA)
+}
+Valor_atual(500, 4, 4)#calculando o valor atual, (p=prestação, i=taxa, n=período)
+```
+
+
+# TAXA EQUIVALENTE
+Taxas Equivalentes são taxas que quando aplicadas ao mesmo capital, num mesmo intervalo de tempo, produzem montantes iguais. Essas taxas devem ser observadas com muita atenção, em alguns financiamentos de longo prazo, somos apenas informados da taxa mensal de juros e não tomamos conhecimento da taxa anual ou dentro do período estabelecido, trimestre, semestre entre outros.[Brasil Escola](https://brasilescola.uol.com.br/matematica/taxas-equivalentes.htm)
+
+Equação da taxa Equivalente 
+$$1+ia=(1+ip)^n$$
+ia = taxa anual
+
+ip = taxa período
+
+n = numero de período
+
+Exemplo: Qual a taxa anual de juros equivalente a 2% ao mês?"[Brasil Escola](https://brasilescola.uol.com.br/matematica/taxas-equivalentes.htm)
+
+Vamos responder essa pergunta, criando uma função para resolver de forma automática para encontrarmos a taxa anual, basta você substituir os valores de (ia= taxa anual, n= número de  período) daí, temos:
+```{r echo=TRUE}
+taxa_efetiva<-function(ip, n){
+
+  ia<-((1+ip/100)^n-1)*100
+  return(ia)
+}
+taxa_efetiva(2, 12)#calculado a taxa anual(ip=taxa período, n=número de período)
+```
+Vamos descobrir a taxa equivalente, mensal. Para isso, vamos criar uma função, para resolver de forma automática, a resolução.
+
+Exemplo: Determine a taxa mensal equivalente a 100% ao ano, e a 39% ao trimestre.
+
+Criando a função para descobrir a taxa mensal, temos. vai ser em função do (ip= taxa período), temos
+
+```{r}
+taxa_efetivadoip<-function(ia, n){
+
+  ip<-((1+ia/100)^{1/n}-1)*100
+  return(ip)
+}
+taxa_efetivadoip(39, 3)#calculando a taxa equivalente(ia=taxa anual, n=número de período)
+```
+
+Taxa Nominal ou efetiva com capitalização K vezes
+
+taxa Nominal (Aparente) • Período de capitalização é igual ao prazo da taxa
+
+$$I_E= Taxa-efetiva$$
+
+$$k=\frac {Período-da -taxa}{Período-da-capitalização}$$
+
+$$I_E=(1+ \frac{1}{k})^k-1$$
+
+# DESCONTOS 
+Os descontos, como o próprio nome diz , é um desconto cedido à alguém ou uma instituição por quitar sua dívida antecipadamente. Para quem ainda ficou na dúvida, o conceito de desconto é o antônimo de juro, enquanto o juro é dado para estender o prazo para pagamento, o desconto é dado por antecipação desse prazo.
+
+Os descontos se dividem em dois grupos e subgrupos, que são: Desconto simples e Desconto composto; Desconto Comercial ou por fora e Desconto racional ou por dentro, respectivamente.
+
+Todo desconto tem algo em comum, seja ele simples ou composto que é:[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+
+$$D= N-A$$
+D = valor do descontos
+
+N = Valor nominal (valor inicial)
+
+A = Valor atual
+
+## Desconto Comercial Simples ou Por fora
+O desconto é calculado sobre o valor nominal do produto ou serviço.[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+$$D_c=N \cdot i \cdot t$$
+$$A=N \cdot (1- i \cdot t)$$         
+
+Onde:
+
+DC = desconto comercial
+
+N = valor nominal
+
+i = taxa
+
+t = tempo
+
+A = valor atual
+
+Exemplo: Um boleto de R$2.500,00 com vencimento para daqui a 3 meses foi antecipado com taxa de desconto simples comercial de 2%a.m. Calcule o valor do desconto e o valor atual.
+Solução do exercício: nesse exercício todos os dados necessários para calcular o desconto diretamente pela fórmula foram dados: valor nominal, taxa de desconto e o prazo. Foi informado também que o desconto é comercial. Vamos aplicar a fórmula: [Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+
+```{r echo=TRUE}
+Desconto_comercial<-function(n, i, t){
+  Dc<-n*i/100*t
+  return(Dc)
+}
+Desconto_comercial(2500, 2, 3)#calculando o desconto, (n=valor nominal, i=taxa, t=tempo)
+```
+Calculamos que o desconto foi de:
+
+R$150,00.
+
+Agora vamos calcular o valor atual utilizando a fórmula geral do desconto.
+
+```{r}
+Valor_atual<-function(n, a){
+  Va<-(n-a)
+  return(Va)
+}
+Valor_atual(2500, 150)#calculando o valor atual, (n=valor nominal, a=valor atual)
+```
+Portanto, o valor atual é de:
+
+R$2.350,00
+ 
+
+## Desconto Racional Simples ou Por dentro
+O desconto é calculado sobre o valor atual do produto ou serviço.[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+
+$$D_r=A\cdot i \cdot t$$
+$$A=\frac{N}{1+i \cdot t}$$          
+
+Onde:
+
+Dr = desconto racional
+
+N = valor nominal
+
+i = taxa
+
+t = tempo
+
+A = valor atual
+
+Exemplo: Um comerciante recebeu um cheque para daqui a 4 meses no valor de R$10.000,00 como pagamento . Como precisa de dinheiro imediatamente, ele foi a um banco para descontar o cheque. A taxa mensal de desconto é de 3,2%. Quanto o comerciante conseguiu antecipar e qual foi o valor do desconto? Considere a modalidade de desconto simples racional.
+Solução do exercício: foi dado o valor nominal do cheque, o prazo e a taxa. Nesse caso, vamos utilizar a fórmula do valor atual racional.[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+```{r}
+Valor_atual<-function(n, i, t){
+  va<-n/(1+i/100*t)
+  return(va)
+}
+Valor_atual(10000, 3.2, 4)#calculando o valor atual, (n=valor nominal, a=valor atual)
+```
+O valor atual (antecipado) é de:
+
+R$8.865,24.
+
+Vamos usar a fórmula geral do desconto para calcular o valor do desconto.
+
+```{r}
+Valor_desconto<-function(n, a){
+  Vd<-(n-a)
+  return(Vd)
+}
+Valor_desconto(10000, 8865.248)#calculando o desconto, (n=valor nominal, a=valor atual)
+```
+Portanto o valor do desconto é de:
+
+R$1.134,75.
+
+## Desconto Comercial Composto  ou Por fora
+O desconto é calculado sobre o valor nominal do produto ou serviço. O que irá diferir é que no Valor Atual a taxa é multiplicada sobre ela mesma, dependendo do tempo, e não sobre o tempo, como acontecia no desconto simples.[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+Dc = desconto  Composto Comercial
+
+N = valor nominal
+
+i = taxa
+
+t = tempo
+
+A = valor atual
+
+$$A=N \cdot {(1-i)^t}$$      
+Exemplo: (BNB – FGV). Um título de valor nominal R$ 8.800,00 é pago dois meses antes do vencimento com desconto comercial composto a uma taxa de 5% ao mês. O valor descontado é de: [Desconto composto](https://sabermatematica.com.br/exercicios-resolvidos-desconto-composto.html)
+ 
+```{r}
+Valorcomercial_composto<-function(n, i, t){
+  Vcc<-n*(1-i/100)^t
+  return(Vcc)
+}
+Valorcomercial_composto(8.800, 5, 2)#calculando o desconto, (n=valor nominal, i=taxa, t=tempo)
+```
+ O valor descontado será de:
+ 
+ R$7.942,00
+
+## Desconto  Racional Composto ou Por dentro
+O desconto é calculado sobre o Valor Atual do produto ou serviço. O que irá diferir é que no Valor Atual a taxa é multiplicada sobre ela mesma, dependendo do tempo, e não sobre o tempo, como acontecia no desconto simples.[Matemática financeira Descontos](https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/)
+Dr = desconto racional composto
+
+N = valor nominal
+
+i = taxa
+
+t = tempo
+
+A = valor atual
+
+$$A=\frac {N}{(1+i)^t}$$      
+ Exemplo: Um comerciante emite um boleto no valor de R$ 2.000,00 com data de vencimento para 4 meses. Para antecipar esse boleto o banco cobre uma taxa de juros de 2%a.m.Calcule o valor do desconto racional composto[Desconto composto](https://comocalcular.com.br/matematica/comocalculardescontocomposto/)
+```{r}
+Descontoracional_composto<-function(n, i, t){
+  Dcr<-n/(1+i/100)^t
+  return(Dcr)
+}
+# Assim, para resolver o exercício acima, temos;
+#calculando o desconto, (n=valor nominal, i=taxa, t=tempo)
+Descontoracional_composto(2000, 2, 4)
+```
+O valor do desconto Racional composto, foi de:
+
+R$1.847,69
+
+
+# SISTEMA DE AMORTIZAÇÃO PRICE
+
+O sistema de amortização Price, ou sistema de amortização francês, é um metodo usado em amortização de empréstimo cuja principal caractrísticaprestações (ou parcelas) iguais. O metodo foi apresentado em 1771 por Richard Price em sua obra "Observações sobre Pagamentos Remissivos".
+O metodo foi idealizado pelo seu autor para pensões e aposentadorias. No entanto, foi a partir da 2ª revolução industrial que sua metodologia de cálculo foi aproveitada para cálculos de amortização de empréstimo.[wikipedia](https://www.bing.com/ck/a)
+
+## Para encontrarmos a prestação no Sistema PRICE, temos a seguinte equação e função pronta.
+
+$$P_k=\frac{D_0\cdot i} {1-(1+i)^{-n}}$$
+
+
+## Foi criando uma função para encontrar a prestação, como ela é constante, todas as prestações seguem o mesmo valor.
+```{r}
+Prestação<-function(D0, i, n)
+  {
+  
+  pk<-(D0*i/100)/1-(1+i/100)^-n
+  
+  return(pk)
+}
+Prestação(200, 10, 6)#calculando a prestação, (D0=valor inicial, i=taxa, n=número de período)
+
+```
+
+
+
+## Para encontrarmos o juros no Sistema PRICE, temos a seguinte equaçãoo, JK
+
+$$J_k=i\cdot D_{k-1}$$
+
+##  Para encontrarmos a amortização no Sistema PRICE, temos a seguinte equação, Ak
+
+$$A_k=P_k-j_k$$
+
+## Para encontrarmos a divida no Sistema PRICE, temos a seguinte equação Dk
+
+$$D_k=D_{k-1}-A_{k}$$
+
+## Para encontrarmos a divida no PRICE, em qualquer momento, temos a seguinte equação e função pronta, basta substituir os valores no lugar de (Dk, i, n, k)
+
+DK = divida do empréstimo
+
+i = taxa sobre o valor emprestado
+
+n = quantidade de período
+
+k = o período que quero saber
+
+## Criando uma função generica, para saber a dívida em qualquer momento, temos:
+
+```{r, echo=TRUE}
+Divida_n<-function(pk, i, n, k){
+
+    Div<-pk*(1-(1+i/100)^-(n-k))/(i/100)
+    return(Div)
+}
+Divida_n(20, 1, 4, 3) 
+```
+     
+     exemplo de como usar a função para encontrar a dívida em qualquer momento, os valores de pk, i, n,k foi eu que substimei.
+
+
+## Lembrando que {Pk = prestação}, este método é ideal para sabermos a divída em um período distante da dívida inicial. Para encontrarmos de forma manual.
+$$D_k=P_k \cdot \frac{1-(1+i)^{-{(n-k)}}}{i}$$
+
+pk = prestação
+
+i = taxa 
+
+n = período
+
+k = o período que você quer saber sua divída.
+
+### Exemplo de como encontrar a divida em qualquer momento,temos a equação acima. Mas, foi criado uma função, que ao substituir os valores de (Pk, i, n, k) você já encontra de forma automática.
+
+```{r, echo=TRUE}
+Divida_n<-function(pk, i, n, k){
+
+    Div<-pk*(1-(1+i/100)^-(n-k))/(i/100)
+    return(Div)
+}
+
+Divida_n(64.49938, 1, 150, 100)
+```
+
+    para encontrarmos a dívida em qualquer momento, temos a seguinte função, (pk=prestação, i=txa, n=número de períodos, k= o período que eu quero)
+
+
+# SISTEMA DE AMORTIZAÇÃO SAC
+
+O Sistema de Amortização Constante, também conhecido como SAC, como o próprio nome já diz, é aquele em que o valor amortizado é sempre constante, ou seja, é sempre igual. [Brasil Escola](https://brasilescola.uol.com.br/matematica/sac-sistema-amortizacoes-constantes.htm.) 
+
+## Para calcularmos o valor da Amortização, temos a seguinte equação.
+
+$$A_k=\frac{D_0}{n}$$
+
+
+
+## Para encontrarmos o juros no Sistema SAC, temos a seguinte equaçãoo, JK
+
+$$J_k=i\cdot D_{k-1}$$
+
+
+##  Para encontrarmos a prestação no Sistema SAC, temos a seguinte equação, Pk
+$$P_k=J_k+A_k$$
+
+
+##  Para encontrarmos a divida no Sistema SAC, temos a seguinte equação Dk
+$$D_k=D_n-A_{n-1}$$
+cCriando uma rotina genérica para fazermos o calculo do sistema de amortização SAC, TEMOS:
+
+```{r, echo=TRUE} 
+SAC<-function(i,n,D0){
+i=i/100
+n<-n
+k<-0:n
+# Vetores nulos
+pk<-c();Ak<-c();jk<-c();Dk<-c()
+# Manualmente o primeiro elemento
+pk[1]<-0;Ak[1]<-0;jk[1]<-0;Dk[1]<-D0
+
+# Ak
+for (a in 2:(n+1)) {
+  Ak[a]<-Dk[1]/n
+}
+Ak
+# Dk
+for(d in 2:(n+1)){
+  Dk[d]<-(n-d+1)*Dk[1]/n
+  }
+Dk
+#jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+
+#pk
+for (p in 2:(n+1)) {
+  pk[p]<-Ak[p]+jk[p]
+  
+}
+pk
+
+tabela_SAC<-cbind(k,pk,Ak,jk,Dk)
+soma_SAC<-apply(tabela_SAC, 2, sum)
+tabela_fim<-rbind(tabela_SAC,soma_SAC)
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+SAC(5,10,250) #Criando a tabela pelo sistema SAC, (i=taxa, n=período, D0=valor inicial)
+```
+
+    (n, i, D0) n = números de período, i = taxa sobre o valor, D0 = VALOR da divída inicial. com isso, ao substituir os valores, temos a seguinte tabela. Veremos alguns exemplos mais adiante.
+
+
+
+# SISTEMA DE AMORTIZAÇÃO AMERICANO SAM
+É um sistema de amortização de dívidas onde os juros de um empréstimo são pagos periodicamente, porém a quitação do empréstimo se dá por meio de uma única parcela que deverá ser paga ao final do contrato. [Brasil escola](https://brasilescola.uol.com.br/) 
+
+```{r}
+sam<-function(n, i, D0){i<-i/100
+n<-n
+k<-1:n
+
+## Criando meus vetores nulos
+
+pk<-c(); ak<-c(); jk<-c(); dk<-c()
+
+## Dando valores ao 1º elemento de cada vetor
+pk[1]<-0; ak[1]<-0;jk[1]<-0;dk[1]<-D0
+
+## Recorrência
+
+for(d in 2:(n-1)) {dk[d]<-dk[1]
+
+}
+dk[n]<-0
+
+## Juros jk
+for (j in 2:n) {jk[j]<-i*dk[1]
+
+}
+## amortização ak
+for (a in 2:(n-1)) {ak[a]<-0
+
+}
+ak[n]<-dk[1]
+
+## Prestação pk
+pk<-ak+jk
+
+for (p in 2:n) {pk[p]<-ak[p]+jk[p]
+
+}
+
+tabela<-cbind(k,pk,ak,jk,dk)
+tabela
+
+soma<-apply(tabela, 2, sum)
+soma
+tabelasoma<-rbind(tabela,soma)
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),1]<-0
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),ncol(tabelasoma)]<-0
+tabelasoma
+sam<-tabelasoma
+return(sam)
+  
+}
+sam(5,10,50000)#Criando a tabela pelo sistema SAM, (i=taxa, n=período, D0=valor inicial) 
+
+```
+
+    (n, i, D0) n = números de período, i = taxa sobre o valor, D0 = VALOR da divída inicial. com isso, ao substituir os valores, temos a seguinte tabela. Veremos alguns exemplos mais adiante.
+
++ Como você observou, ao substituir os valores de (n, i, D0) na função criada pelos os autores, já encontramos todos os valores, dos juros e a ultima prestação somado com o juros.
+
+n = quantidade de Período
+
+i = taxa a ser aplicada sobre a dívida
+
+D0 = valor da dívida inicial
+
+
+## Questões de fixação dos sistema de Amortizações PRICE, SAC e SAM
+
+### Exemplo 1. Faça as planilhas de amortização de uma dívida de 250u.m. em 5 pagamentos mensais, com juros de 10% ao mês:
+### a) Pela tabela Price;
+
+```{r, echo= TRUE}
+Price<-function(n,i,D0){
+n<- n
+i<-i/100
+k<-0:n
+# Agora vamos criar vetores nulos
+pk<-c();Ak<-c(); jk<-c();Dk<-c()
+
+# Agora vamos preencher os primeiros valores de cada vetor nulo
+pk[1]<-0; Ak[1]<-0; jk<-0; Dk[1]<-D0
+
+# Preenchendo na ordem específica
+# Pk
+for (p in 2:(n+1)) {
+  pk[p]<- i*Dk[1]/(1-(1+i)^(-n))
+}
+pk
+# Preencher Dk
+for(d in 2:(n+1)) {
+  Dk[d]<-Dk[1]*(1-(1+i)^-(n-d+1))/(1-(1+i)^(-n))
+}
+Dk
+# Preencher jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+# Preencher Ak
+Ak<- pk-jk
+Ak
+price<-cbind(k,pk,Ak,jk,Dk)
+soma_Price<-apply(price, 2,sum)
+tabela_fim<-rbind(price,soma_Price)
+ 
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)}
+
+Price(360,42,71379) 
+```
+
+Plot
+
+```{r}
+library(ggplot2)
+
+# Função Price
+Price <- function(n, i, D0) {
+ n<- n
+i<-i/100
+k<-0:n
+# Agora vamos criar vetores nulos
+pk<-c();Ak<-c(); jk<-c();Dk<-c()
+
+# Agora vamos preencher os primeiros valores de cada vetor nulo
+pk[1]<-0; Ak[1]<-0; jk<-0; Dk[1]<-D0
+
+# Preenchendo na ordem específica
+# Pk
+for (p in 2:(n+1)) {
+  pk[p]<- i*Dk[1]/(1-(1+i)^(-n))
+}
+pk
+# Preencher Dk
+for(d in 2:(n+1)) {
+  Dk[d]<-Dk[1]*(1-(1+i)^-(n-d+1))/(1-(1+i)^(-n))
+}
+Dk
+# Preencher jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+# Preencher Ak
+Ak<- pk-jk
+Ak
+price<-cbind(k,pk,Ak,jk,Dk)
+soma_Price<-apply(price, 2,sum)
+tabela_fim<-rbind(price,soma_Price)
+ 
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+# Exemplo de uso
+resultado <- Price(32, 15, 713)
+
+# Criar um data frame a partir do resultado
+Grafico <- as.data.frame(resultado)
+library(ggplot2)
+GRAf1 <- as.data.frame(Grafico)
+# grafico na evolução do tempo 
+ggplot(GRAf1, aes(x = k)) +
+  geom_line(aes(y = Dk, color = "Dk")) +
+  geom_point(aes(y = Dk, color = "blue")) + 
+  labs(title = "Evolução ao longo do tempo  Sistema PRICE" , 
+       x = "Periodo (k)" ,
+       y = "Valor da divida") +
+  theme_minimal()
+
+
+
+```
+
+
+
+
+
+    Com isso, temos a seguinte tabela concluída, calculada de forma automática, pela rotina criada na linguagem de programação Rstudio.
+
+
+## b) Pela tabela SAC
+
+```{r, echo=TRUE} 
+SAC<-function(i,n,D0){
+i=i/100
+n<-n
+k<-0:n
+# Vetores nulos
+pk<-c();Ak<-c();jk<-c();Dk<-c()
+# Manualmente o primeiro elemento
+pk[1]<-0;Ak[1]<-0;jk[1]<-0;Dk[1]<-D0
+
+# Ak
+for (a in 2:(n+1)) {
+  Ak[a]<-Dk[1]/n
+}
+Ak
+# Dk
+for(d in 2:(n+1)){
+  Dk[d]<-(n-d+1)*Dk[1]/n
+  }
+Dk
+#jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+
+#pk
+for (p in 2:(n+1)) {
+  pk[p]<-Ak[p]+jk[p]
+  
+}
+pk
+
+tabela_SAC<-cbind(k,pk,Ak,jk,Dk)
+soma_SAC<-apply(tabela_SAC, 2, sum)
+tabela_fim<-rbind(tabela_SAC,soma_SAC)
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+SAAC <- SAC(25,15,3500)#Criando a tabela pelo sistema SAC, (i=taxa, n=período, D0=valor inicial)
+
+```
+
+Plot sac
+
+```{r}
+library(ggplot2)
+Grafico1 <- as.data.frame(SAAC)
+ggplot(Grafico1, aes(x = k)) + 
+  geom_line(aes(y = Dk, color = "DK"))+
+  geom_point(aes(y = Dk, color = "red"))+
+  labs(title = "Evalução das prestações", 
+       x = "Numeros de prestações",
+       y = "Valor do emprestimo") + 
+    theme_minimal()
+
+```
+
+
+
+
+## Exemplo 2. Considere a amortização de uma dívida de 5000 u.m., em 150 meses, com juros de 1% ao mês, pela tabela Price. Determine:
+
+## a) Equação para encontrar o Pk, { Pk = Prestação}, temos:
+$$P_k=\frac{D_0\cdot i} {1-(1+i)^{-n}}$$
+
+
+
+## a) O valor da centésima prestação
+$$P_{100}=\frac {64.49938\cdot {(1-(1+0.1)^{-(150-100)})}}{0.01}$$
+
+
+### Para encontrarmos a divida em qualquer momento, de maneira manual, temos a seguinte equação.
+
+$$D_k=P_k \cdot \frac{1-(1+i)^{-{(n-k)}}}{i}$$
+
+### Encontrando o mesmo valor da divida em qualquer momento, pela função criada pelos os autores, temos:
+```{r, echo=TRUE}
+Divida_n<-function(pk, i, n, k){
+
+    Div<-pk*(1-(1+i/100)^-(n-k))/(i/100)
+    return(Div)
+}
+Divida_n(64.49938, 1, 150, 100)
+```
+
+    calculando a dívida em qualquer momento(pk=prestação, i=taxa, n=período, k= a dívida naquele momento)
+
+## Refazendo o problema anterior pelo SAC.
+
+```{r, echo= TRUE}
+SAC<-function(i,n,D0){
+i=i/100
+n<-n
+k<-0:n
+# Vetores nulos
+pk<-c();Ak<-c();jk<-c();Dk<-c()
+# Manualmente o primeiro elemento
+pk[1]<-0;Ak[1]<-0;jk[1]<-0;Dk[1]<-D0
+
+# Ak
+for (a in 2:(n+1)) {
+  Ak[a]<-Dk[1]/n
+}
+Ak
+# Dk
+for(d in 2:(n+1)){
+  Dk[d]<-(n-d+1)*Dk[1]/n
+  }
+Dk
+#jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+
+#pk
+for (p in 2:(n+1)) {
+  pk[p]<-Ak[p]+jk[p]
+  
+}
+pk
+
+tabela_SAC<-cbind(k,pk,Ak,jk,Dk)
+soma_SAC<-apply(tabela_SAC, 2, sum)
+tabela_fim<-rbind(tabela_SAC,soma_SAC)
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+Grafico2 <- SAC(n=15,i=1,D0=5000)#Criando a tabela pelo sistema SAC, (i=taxa, n=período, D0=valor inicial)
+
+```
+
+Grafico 2
+
+```{r}
+library(ggplot2)
+GRAf1 <- as.data.frame(Grafico2)
+ggplot(GRAf1, aes(x = k)) +
+  geom_line(aes(y = Dk, color = "Dk")) +
+  geom_point(aes(y = Dk, color = "blue")) + 
+  labs(title = "Evolução ao longo do tempo" , 
+       x = "Periodo" ,
+       y = "Valor emprestado") +
+  theme_minimal()
+
+
+
+
+```
+
+
+
+## Exemplo 3. Faça as planilhas de amortização de uma dívida de 150u.m. em 8 pagamentos mensais, com juros de 10% ao mês:
+
+## a) Pela tabela Price;
+```{r, echo= TRUE}
+Price<-function(n,i,D0){
+n<- n
+i<-i/100
+k<-0:n
+# Agora vamos criar vetores nulos
+pk<-c();Ak<-c(); jk<-c();Dk<-c()
+
+# Agora vamos preencher os primeiros valores de cada vetor nulo
+pk[1]<-0; Ak[1]<-0; jk<-0; Dk[1]<-D0
+
+# Preenchendo na ordem específica
+# Pk
+for (p in 2:(n+1)) {
+  pk[p]<- i*Dk[1]/(1-(1+i)^(-n))
+}
+pk
+# Preencher Dk
+for(d in 2:(n+1)) {
+  Dk[d]<-Dk[1]*(1-(1+i)^-(n-d+1))/(1-(1+i)^(-n))
+}
+Dk
+# Preencher jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+# Preencher Ak
+Ak<- pk-jk
+Ak
+price<-cbind(k,pk,Ak,jk,Dk)
+soma_Price<-apply(price, 2,sum)
+tabela_fim<-rbind(price,soma_Price)
+ 
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)}
+
+Price(8,10,150)#Criando a tabela pelo sistema PRICE, (i=taxa, n=período, D0=valor inicial)
+```
+
+
+## b) Pelo SAC
+
+```{r, echo= TRUE}
+SAC<-function(i,n,D0){
+i=i/100
+n<-n
+k<-0:n
+# Vetores nulos
+pk<-c();Ak<-c();jk<-c();Dk<-c()
+# Manualmente o primeiro elemento
+pk[1]<-0;Ak[1]<-0;jk[1]<-0;Dk[1]<-D0
+
+# Ak
+for (a in 2:(n+1)) {
+  Ak[a]<-Dk[1]/n
+}
+Ak
+# Dk
+for(d in 2:(n+1)){
+  Dk[d]<-(n-d+1)*Dk[1]/n
+  }
+Dk
+#jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+
+#pk
+for (p in 2:(n+1)) {
+  pk[p]<-Ak[p]+jk[p]
+  
+}
+pk
+
+tabela_SAC<-cbind(k,pk,Ak,jk,Dk)
+soma_SAC<-apply(tabela_SAC, 2, sum)
+tabela_fim<-rbind(tabela_SAC,soma_SAC)
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+SAC(n=8,i=10,D0=150)#Criando a tabela pelo sistema SAC, (i=taxa, n=período, D0=valor inicial)
+```
+## Exemplo 4 . Considere a amortização de uma dívida de 3500 u.m., em 180 meses, com juros de 1% ao mês, pela tabela Price. Determine:
+
+## a) O valor da centésima prestação;
+
+$$D_{k}=\frac {pk\cdot {(1-(1+i)^{-(n-k)})}}{i}$$
+Obs: Usamos essa equação, para fazer de forma manual, para saber o estado da divida em qualquer momento.
+
+## b) O estado da dívida nessa época.
+Será o valor que vc encontrar no período proposto pelo exercício
+
+##  Refazendo o problema anterior pelo SAC.
+
+```{r, echo= TRUE}
+SAC<-function(i,n,D0){
+i=i/100
+n<-n
+k<-0:n
+# Vetores nulos
+pk<-c();Ak<-c();jk<-c();Dk<-c()
+# Manualmente o primeiro elemento
+pk[1]<-0;Ak[1]<-0;jk[1]<-0;Dk[1]<-D0
+
+# Ak
+for (a in 2:(n+1)) {
+  Ak[a]<-Dk[1]/n
+}
+Ak
+# Dk
+for(d in 2:(n+1)){
+  Dk[d]<-(n-d+1)*Dk[1]/n
+  }
+Dk
+#jk
+for(j in 2:(n+1)){
+  jk[j]<-i*Dk[j-1]
+}
+jk
+
+#pk
+for (p in 2:(n+1)) {
+  pk[p]<-Ak[p]+jk[p]
+  
+}
+pk
+
+tabela_SAC<-cbind(k,pk,Ak,jk,Dk)
+soma_SAC<-apply(tabela_SAC, 2, sum)
+tabela_fim<-rbind(tabela_SAC,soma_SAC)
+tabela_fim[nrow(tabela_fim),ncol(tabela_fim)]<-0
+tabela_fim[nrow(tabela_fim),1]<-0
+return(tabela_fim)
+}
+
+SAC(n=180,i=1,D0=3500)#Criando a tabela pelo sistema SAC, (i=taxa, n=período, D0=valor inicial)
+
+```
+
+### Rotina do SISTEMA DE AMORTIZAÇÃO AMERICANO
+
+### Exemplo 5:[Brasil escola](https://brasilescola.uol.com.br/) Um empréstimo de R$ 50.000,00 será pago através do sistema americano no prazo de 10 meses, a juros mensais de 3% ao mês. 
+
+
+
+```{r, echo=TRUE}
+sam<-function(n, i, D0){i<-i/100
+n<-n
+k<-1:n
+
+## Criando meus vetores nulos
+
+pk<-c(); ak<-c(); jk<-c(); dk<-c()
+
+## Dando valores ao 1º elemento de cada vetor
+pk[1]<-0; ak[1]<-0;jk[1]<-0;dk[1]<-D0
+
+## Recorrência
+
+for(d in 2:(n-1)) {dk[d]<-dk[1]
+
+}
+dk[n]<-0
+
+## Juros jk
+for (j in 2:n) {jk[j]<-i*dk[1]
+
+}
+## amortização ak
+for (a in 2:(n-1)) {ak[a]<-0
+
+}
+ak[n]<-dk[1]
+
+## Prestação pk
+pk<-ak+jk
+
+for (p in 2:n) {pk[p]<-ak[p]+jk[p]
+
+}
+
+tabela<-cbind(k,pk,ak,jk,dk)
+tabela
+
+soma<-apply(tabela, 2, sum)
+soma
+tabelasoma<-rbind(tabela,soma)
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),1]<-0
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),ncol(tabelasoma)]<-0
+tabelasoma
+sam<-tabelasoma
+return(sam)
+  
+}
+sam(10,3,50000)#Criando a tabela pelo sistema SAM, (i=taxa, n=período, D0=valor inicial)
+
+```
+
+### Exemplo 6.[Brasil Escola](https://brasilescola.uol.com.br/matematica/sistema-americano-amortizacao.htm) Construa a planilha e determine o valor total dos juros pagos pelo empréstimo referente a R$ 25.250,00, pagos pelo sistema americano durante 5 meses, a uma taxa de 2,5% ao mês.
+
+```{r, echo=TRUE}
+sam<-function(n, i, D0){i<-i/100
+n<-n
+k<-1:n
+
+## Criando meus vetores nulos
+
+pk<-c(); ak<-c(); jk<-c(); dk<-c()
+
+## Dando valores ao 1º elemento de cada vetor
+pk[1]<-0; ak[1]<-0;jk[1]<-0;dk[1]<-D0
+
+## Recorrência
+
+for(d in 2:(n-1)) {dk[d]<-dk[1]
+
+}
+dk[n]<-0
+
+## Juros jk
+for (j in 2:n) {jk[j]<-i*dk[1]
+
+}
+## amortização ak
+for (a in 2:(n-1)) {ak[a]<-0
+
+}
+ak[n]<-dk[1]
+
+## Prestação pk
+pk<-ak+jk
+
+for (p in 2:n) {pk[p]<-ak[p]+jk[p]
+
+}
+
+tabela<-cbind(k,pk,ak,jk,dk)
+tabela
+
+soma<-apply(tabela, 2, sum)
+soma
+tabelasoma<-rbind(tabela,soma)
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),1]<-0
+tabelasoma
+
+tabelasoma[nrow(tabelasoma),ncol(tabelasoma)]<-0
+tabelasoma
+sam<-tabelasoma
+return(sam)
+  
+}
+sam(5,2.5,25250)#Criando a tabela pelo sistema SAM, (i=taxa, n=período, D0=valor inicial)
+```
+
+
+
+
+# CONCLUSÃO
+
+É notória a grande dificuldade que uma boa parte dos discentes apresentam na hora 
+de compreender a matemática, com base nisso, o presente trabalho teve por finalidade 
+abordar o estudo da matemática financeira por meio de uma linguagem de programação 
+chamada Rstudio. Desta forma, os alunos conseguem associar os assuntos da 
+matemática financeira com uma tecnologia, tornando-a mais fácil e compreensível. 
+Usou-se o aplicativo de programação Rstudio,, onde o texto foi escrito no mesmo com 
+o auxílio do RMARKDOWN. Por fim, acredita-se que este trabalho servirá como 
+incentivo para um melhor ensino-aprendizagem da matemática financeira, podendo 
+assim, ser utilizada como uma apostila de auxílio para futuros discentes.
+
+
+# $REFERÊNCIAS$
+
+
+
+
+Disponível em: <https://www.bing.com/ck/a?!&&p=0fc39d50aa062528JmltdHM9MTY4NTA1OTIwMCZpZ3VpZD0zMTkyNzExMy1lOGUxLTYyMTItM2YxZC02M2FhZTljZDYzMDgmaW5zaWQ9NTQ5NQ&ptn=3&hsh=3&fclid=31927113-e8e1-6212-3f1d-63aae9cd6308&psq=sistema+de+amortiza%c3%a7%c3%a3o+price+richard+price&u=a1aHR0cHM6Ly9wdC53aWtpcGVkaWEub3JnL3dpa2kvVGFiZWxhX1ByaWNlIzp-OnRleHQ9VGFiZWxhJTIwUHJpY2UlMkMlMjB0YW1iJUMzJUE5bSUyMGNoYW1hZG8lMjBkZSUyMHNpc3RlbWElMjBmcmFuYyVDMyVBQXMlMjBkZSxSZW1pc3Npdm9zJTIyJTIwJTI4ZW0lMjBpbmdsJUMzJUFBcyUzQSUyME9ic2VydmF0aW9ucyUyMG9uJTIwUmV2ZXJzaW9uYXJ5JTIwUGF5bWVudHMlMjAlMjku&ntb=1>. Acesso em: 26 maio. 2023.
+
+SILVA, Marcos Noé Pedro da. "SAC: Sistema de Amortizações Constantes"; Brasil Escola. Disponível em: https://brasilescola.uol.com.br/matematica/sac-sistema-amortizacoes-constantes.htm. Acesso em 26 de maio de 2023.
+
+SILVA, Marcos Noé Pedro da. "Taxas Equivalentes "; Brasil Escola. Disponível em: https://brasilescola.uol.com.br/matematica/taxas-equivalentes.htm. Acesso em 27 de maio de 2023.
+
+Disponivel em: https://brasilescola.uol.com.br/matematica/sistema-americano-amortizacao.htm, Acesso em 25 maio 2023
+
+LOPES,Adriana."O que é matemática financeira"; Educar mais Brasil. Disponível em: https://www.educamaisbrasil.com.br/enem/matematica/matematica-financeira. Acesso em 26 de maio de 2023.
+Qual a diferença entre juros simples e juros composto? Fala, Nubank, 8 jun. 2019. Disponível em: <https://blog.nubank.com.br/juros-simples-e-composto-qual-a-diferenca/>. Acesso em: 26 maio. 2023
+
+MOSMANN, G. Montante: saiba o que é e como é possível calculá-lo. Disponível em: <https://www.suno.com.br/artigos/montante/>. Acesso em: 26 maio. 2023.
+
+Valor Futuro e Valor Presente. Disponível em: <https://wp.ufpel.edu.br/planilhasgoogle/modulo-avancado/aula-2-funcoes-financeiras/valor-futuro-e-valor-presente/>. Acesso em: 27 maio. 2023.
+
+Matemática Financeira: Desconto Simples e Composto. Disponível em: <https://descomplicandonaweb.com.br/matematica-financeira-desconto-simples-e-composto/>. Acesso em: 28 maio. 2023.
+
+EXERCÍCIOS RESOLVIDOS SOBRE DESCONTO COMPOSTO. Disponível em: <https://sabermatematica.com.br/exercicios-resolvidos-desconto-composto.html>. Acesso em: 28 maio. 2023.
+
+Como calcular desconto composto. Disponível em: <https://comocalcular.com.br/matematica/comocalculardescontocomposto/>. Acesso em: 28 maio. 2023.
+
+
+
+
+</div>
+
+
