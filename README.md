@@ -1,2 +1,2 @@
-# Aplicativo
+# Scripts
 Aplicativo em shiny
