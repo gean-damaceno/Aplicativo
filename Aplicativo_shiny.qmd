@@ -1,0 +1,167 @@
+---
+title: "DualCorr (x,y)"
+format: dashboard
+server: shiny
+theme: Flatly
+embad-resources: true
+---
+
+```{r}
+#| label: setup
+#| context: server
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(plotly)
+library(readr)
+library(tidyverse)
+
+```
+
+# {.sidebar data-width=350}
+
+#### Importe a base de dados
+ 
+```{r}
+#| label: input
+fileInput("arquivo", "Carregar Arquivo", 
+          accept = c(".csv", ".txt"))
+
+# fileInput("arquivo", "Carregar arquivo",
+#                 accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv", "txt"))
+
+uiOutput("column_selector_01")
+uiOutput("column_selector_02")
+```
+
+::: {.callout-note collapse="true"}
+## Tutorial
+1 - Clique no botão "Browser" para carregar a base de dados que deseja analisar.
+
+2 - Selecione o arquivo que você deseja analisar a correlação em formato (.CSV e txt) e clique em "Abrir".
+
+3 - Selecione as colunas que desejar analisar a correlação.
+:::
+
+# Correlação
+
+## ## Column {width=80%} 
+
+```{r}
+#| label: redezar grafico
+plotlyOutput("dispersao")
+plotlyOutput("densidade")
+```
+
+
+#### Column {width=20%}
+
+::: {.valuebox }
+`r valueBoxOutput('correlation_value')`
+:::
+
+::: {.valuebox }
+`r valueBoxOutput('coeficiente_angular')`
+:::
+
+::: {.valuebox }
+`r valueBoxOutput('intersepto')`
+:::
+
+# Data
+
+```{r}
+#| label: Visualização da base de dados
+
+dataTableOutput("tabela")
+```
+
+
+
+```{r}
+#| label: Visualização dos dados
+#| context: server
+
+data <- reactive({
+    req(input$arquivo)
+    df <- read_delim(input$arquivo$datapath)
+    return(df)})
+
+output$data <- renderUI({
+    tableOutput("data")
+})
+
+# Atualiza o seletor de colunas quando um arquivo é carregado
+output$column_selector_01 <- renderUI({
+    req(data())
+    selectInput("column_01", "Selecione a Variavel x:",
+                choices = names(data()))
+  })
+output$column_selector_02 <- renderUI({
+    req(data())
+    selectInput("column_02", "Selecione a Variavel y:",
+                choices = names(data()))
+  })
+
+```
+
+```{r}
+#| label: Valor da Correlação
+#| context: server
+
+output$correlation_value <- renderValueBox({
+    req(data())
+    explicativo <- data()[[input$column_01]]
+    resposta <- data()[[input$column_02]]
+    cor <- cor(explicativo, resposta)
+    valueBox(round(cor,2), "Correlação", icon = icon("stats"))
+  })
+
+
+output$intersepto <- renderValueBox({
+  req(data())
+  explicativo <- data()[[input$column_01]]
+  resposta <- data()[[input$column_02]]
+  modelo <- lm(resposta ~ explicativo)
+  valueBox(round(coef(modelo)[1],2), "Intercepto", icon = icon("stats"))
+})
+
+output$coeficiente_angular <- renderValueBox({
+  req(data())
+  explicativo <- data()[[input$column_01]]
+  resposta <- data()[[input$column_02]]
+  modelo <- lm(resposta ~ explicativo)
+  valueBox(round(coef(modelo)[2],2), "Coeficiente Angular", icon = icon("stats"))
+})
+
+```
+
+```{r}
+#| label: Grafico de Dispersão
+#| context: server
+
+output$dispersao <- renderPlotly({
+    req(data())
+    ggplot(data(), aes(x = data()[[input$column_01]], y = data()[[input$column_02]])) +
+    geom_point() +
+    labs(title = "Gráfico de Dispersão",
+         x = input$column_01,
+         y = input$column_02)+
+    geom_smooth(method = "lm", se = T)+
+    theme_minimal()
+  })
+
+```
+
+
+```{r}
+#| context: server
+
+output$tabela <- renderDataTable({
+    req(data())
+    data()
+})
+```
+
+
+
