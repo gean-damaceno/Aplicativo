@@ -1,0 +1,43 @@
+---
+title: "Plano de ensino para utilização do aplicativo em Shiny"
+author: "Gean Pereira Damaceno"
+date: "2024/08/29"
+format: pdf
+editor: visual
+alignment: justify
+include-in-header: 
+      text: |
+        \usepackage{graphicx}
+        \usepackage{float}
+        \usepackage{caption}
+        \captionsetup[table]{skip=5pt}
+        \captionsetup[figure]{skip= 1pt}
+---
+
+
+
+# Publico alvo
+
+O público-alvo para esta ferramenta inclui pesquisadores de diversas áreas, cientistas de dados, estudantes acadêmicos e profissionais de negócios.
+
+# Objetivos
+
+O aplicativo, com o tema “Correlação de duas variáveis”, tem como objetivo permitir que os usuários realizem correlações entre duas variáveis de forma prática e intuitiva.
+
+
+# Pré-requisitos para compreender os conceitos abordados no aplicativo
+
+Não é necessário que o usuário tenha conhecimentos avançados em estatística. Basta que ele entenda o conceito básico de que duas variáveis podem ser correlacionadas.
+
+
+# Instruções para a utilização do recurso
+
+Para utilizar o aplicativo, o usuário deve acessar o site do Shiny, navegar até a galeria e clicar no aplicativo desejado. Uma nova aba será aberta, onde o aplicativo será executado. A partir daí, o usuário poderá manusear o aplicativo de forma prática e precisa.
+
+# Exemplo de utilização
+
+Por exemplo: um determinada ração faz efeito no ganho de peso de um animal?
+
+# Observação
+Para trabalhos futuros, planejamos desenvolver um aplicativo que possa ser disponibilizado em plataformas móveis, permitindo que os usuários acessem diretamente de seus celulares, sem a necessidade de um computador.
+
